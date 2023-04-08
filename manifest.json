@@ -1,0 +1,36 @@
+{
+    "manifest_version": 3,
+    "name": "Advanced BOJ",
+    "description": "auto BOJ to github",
+    "version": "0.0.1",
+    "declarative_net_request": {
+        "rule_resources": [
+            {
+                "id": "ruleset",
+                "enabled": true,
+                "path": "rules.json"
+            }
+        ]
+    },
+    "permissions": [
+        "webRequest",
+        "storage",
+        "declarativeNetRequest",
+        "declarativeNetRequestWithHostAccess"
+    ],
+    "host_permissions": [
+        "https://www.acmicpc.net/",
+        "https://github.com/"
+    ],
+    "content_scripts": [{
+        "matches": ["https://www.acmicpc.net/status?*"],
+        "js": [
+            "./modules/utils.js",
+            "./data/auto_commit_token.js",
+            "./js/baekjoon/getdatas.js",
+            "./js/baekjoon/auto_commit.js",
+            "./js/github/operation.js"
+        ],
+        "run_at": "document_idle"
+    }]
+}
