@@ -1,0 +1,113 @@
+html body {
+    font-size: 20px;
+}
+
+hr {
+    margin-top: 0;
+}
+
+#status {
+    display: none;
+    background-color: rgb(121, 205, 222, 0.2);
+    padding: 20px;
+    border: 1px solid #79cdde;
+    margin-bottom: 50px;
+}
+
+form {
+    margin-bottom: 20px;
+    font-weight: bold;
+}
+
+label {
+    font-weight: 100;
+}
+
+table {
+    font-weight: bold;
+}
+
+td {
+    vertical-align: middle !important;
+}
+
+td:nth-child(1) {
+    width: 329px;
+}
+
+td input {
+    border: 0 !important;
+    font-size: 20px !important;
+}
+
+.result-ac {
+    color: #09b58c;
+}
+
+.result-pac {
+    color: #ffc107
+}
+
+.result-wa {
+    color: #dd4124
+}
+
+.result-tle {
+    color: #fa7268;
+}
+
+.result-ole {
+    color: #fa7268;
+}
+
+.result-wait {
+    color: #a49e9e;
+}
+
+.result-compile {
+    color: #e67e22;
+}
+
+.result-judging {
+    color: #e67e22;
+}
+
+.git_input, #github_commit_message_preview {
+    padding: .175rem .75rem;
+    font-weight: bold;
+}
+
+/* #github_commit_message_preview {
+    margin: 0px;
+    display: inline-block;
+} */
+
+.github_commit_editor_parent {
+    position: relative;
+}
+
+.github_commit_editor {
+    position: absolute;
+    width: 97%;
+    top: 15%;
+    white-space: nowrap;
+    overflow-x: hidden;
+}
+
+#github_commit_message {
+    background:transparent;
+    color:transparent;
+    caret-color: black;
+    position: relative;
+    z-index: 11;
+}
+
+.highlight {
+    color: #e63f22
+}
+
+.placeholder_viewer {
+    margin-left: 13px;
+    color: #a49e9e;
+    font-size: 18px;
+}

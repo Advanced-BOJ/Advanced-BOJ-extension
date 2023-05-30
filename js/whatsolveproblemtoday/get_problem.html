@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="ko">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title> 오늘 뭐 풀지? </title>
+
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+
+        <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.12.1/css/jquery.dataTables.css">
+        <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.12.1/js/jquery.dataTables.js"></script>
+    </head>
+
+
+    <body style="background: rgb(242,242,242);">
+        <div class="col">
+            <h1 class="text-center">get problems</h1>
+        </div>
+        <div class="container-fluid mb-5">
+            <div class="col-6 mx-auto">
+                <div class="input-group">
+                    <span class="input-group-text">오늘 뭐 풀지?</span>
+                    <input type="text" class="form-control" id="problem_query">
+                    <button class="btn btn-primary" type="button" onclick="get_problems()">검색하기</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-12 mx-auto">
+            <table id="problems_table" class="table text-center">
+                <thead>
+                    <tr>
+                        <th scope="col">문제번호</th>
+                        <th scope="col">문제이름</th>
+                        <th scope="col">맞은 사람 수</th>
+                        <th scope="col">평균 시도 횟수</th>
+                    </tr>
+                </thead>
+                <tbody id="here">
+                
+                </tbody>
+            </table>
+        </div>
+    </body>
+</html>
+
+<script>
+async function get_problems() {
+    let query = document.getElementById("problem_query").value
+    query = query.replaceAll("#", "%23");
+    
+    $.ajax({
+        type: "GET",
+        contentType: "application/json",
+        url: "https://solved.ac/api/v3/search/problem?query=" + query,
+        dataType: "text",
+        success: function (r) {
+            let get_datas = JSON.parse(r);
+            let problems_info = get_datas["items"]
+
+            $("#problems_table").DataTable({
+                destroy: true,
+                bAutoWidth: false,
+                data: problems_info,
+                pageLength: 50,
+                columns: [
+                    { data : "problemId" },
+                    { data : 'titleKo' },
+                    { data : 'acceptedUserCount' },
+                    { data : 'averageTries' },
+                ]
+            })
+        },
+        error: () => {
+            alert("query를 잘 못 입력하셨거나, 인터넷 환경이 안좋습니다. 다시 시도해 주세요")
+        }
+    })
+}
+</script>

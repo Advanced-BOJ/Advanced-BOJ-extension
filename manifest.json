@@ -3,6 +3,20 @@
     "name": "Advanced BOJ",
     "description": "auto BOJ to github",
     "version": "0.0.1",
+    "background": {
+        "service_worker": "background.js"
+    },
+    "permissions": [
+        "tabs",
+        "activeTab",
+        "scripting",
+        "webRequest",
+        "storage",
+        "declarativeNetRequest",
+        "declarativeNetRequestWithHostAccess",
+        "identity"
+    ],
+    "options_page": "options/options.html",
     "declarative_net_request": {
         "rule_resources": [
             {
@@ -12,12 +26,9 @@
             }
         ]
     },
-    "permissions": [
-        "webRequest",
-        "storage",
-        "declarativeNetRequest",
-        "declarativeNetRequestWithHostAccess"
-    ],
+    "action": {
+        "default_popup": "popup/popup.html"
+    },
     "host_permissions": [
         "https://www.acmicpc.net/",
         "https://github.com/"
@@ -25,12 +36,42 @@
     "content_scripts": [{
         "matches": ["https://www.acmicpc.net/status?*"],
         "js": [
+            "./modules/base64.js",
             "./modules/utils.js",
-            "./data/auto_commit_token.js",
             "./js/baekjoon/getdatas.js",
-            "./js/baekjoon/auto_commit.js",
-            "./js/github/operation.js"
+            "./js/baekjoon/judge_status.js",
+            "./js/github/commit_message_setter.js",
+            "./js/github/auto_commit_controller.js"
         ],
         "run_at": "document_idle"
-    }]
+        }, 
+        {
+            "matches": ["https://www.acmicpc.net/*"],
+            "js": [
+                "./modules/utils.js",
+                "./js/baekjoon/change.js"
+            ],
+            "run_at": "document_idle"
+        },
+        {
+            "matches": ["https://github.com/*"],
+            "js": [
+                "./modules/utils.js",
+                "./js/github/oauth.js",
+                "./js/github/operation.js"
+            ],
+            "run_at": "document_idle"
+        },
+        {
+            "matches": ["https://*/*"],
+            "js": [
+                "./modules/utils.js",
+                "./js/baekjoon/getdatas.js"
+            ],
+            "run_at": "document_idle"
+        }
+    ],
+    "content_security_policy": {
+        "extension_pages": "script-src 'self'; object-src 'self'"
+    }
 }

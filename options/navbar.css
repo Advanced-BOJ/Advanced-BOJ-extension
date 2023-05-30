@@ -1,0 +1,25 @@
+.navbar {
+    font-family: 'IBM Plex Sans KR', sans-serif;
+    font-size: 16px;
+    font-weight: 600;
+    margin-bottom: 0;
+    border-width: 0;
+    z-index: 100;
+}
+
+.navbar-custom-color {
+    background-color: #666666;
+}
+
+.nav-item img {
+    height: 55px;
+}
+
+.navbar {
+    border-radius: 0;
+}
+
+.nav-link {
+    color: white !important;
+    font-size: 20px;
+} 
