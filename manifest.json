@@ -57,8 +57,10 @@
             "matches": ["https://github.com/*"],
             "js": [
                 "./modules/utils.js",
-                "./js/github/oauth.js",
-                "./js/github/operation.js"
+                "./js/github/commit_message_setter.js",
+                "./js/github/auto_commit_controller.js",
+                "./js/github/github_message_sender.js",
+                "./js/github/oauth.js"
             ],
             "run_at": "document_idle"
         },

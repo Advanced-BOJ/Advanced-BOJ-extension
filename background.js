@@ -16,7 +16,7 @@ async function send_url_wait(sendResponse) {
 }
 
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
-    if (request.message === "popup") {
+    if (request.message === "open_github_option") {
         chrome.tabs.create({ url: chrome.runtime.getURL("options/git_options.html") });
     }
 });

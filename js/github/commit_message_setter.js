@@ -1,11 +1,11 @@
 class Commit_message_setter {
     constructor () {
         this.message = "[baekjoon] {problem_title} | 메모리: {memory} KB, 시간: {time} ms"
-        this.candidates = this.get_candidate_keys(this.message)
+        this.candidates = this.#get_candidate_keys(this.message)
         this.keys = ["problem_title", "problem_id", "time", "memory"]
     }
 
-    get_candidate_keys(commit_message) {
+    #get_candidate_keys(commit_message) {
         let candidates = []
 
         const commit_message_length = commit_message.length;
@@ -23,7 +23,7 @@ class Commit_message_setter {
 
     set_commit_message(commit_message, preview_element) {
         this.message = commit_message;
-        this.candidates = this.get_candidate_keys(commit_message)
+        this.candidates = this.#get_candidate_keys(commit_message)
 
         let element_value = commit_message;
         for (let i = this.candidates.length - 1; i >= 0; i--) {
@@ -40,5 +40,5 @@ class Commit_message_setter {
 
 
 function get_Commit_message_setter() {
-    return new Commit_message_setter();
+    return new Commit_message_setter()
 }

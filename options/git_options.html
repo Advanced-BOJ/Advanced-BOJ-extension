@@ -39,19 +39,22 @@
             <table class="table table-bordered">
                 <tr>
                     <td>Github Access Token</td>
-                    <td><input type="text" disabled class="form-control git_input" id="github_access_token"></td>
+                    <td><input type="text" disabled class="form-control git_input" id="github_access_token" placeholder="'Access 토큰 생성' 버튼을 누른 후, 새로고침 해주세요"></td>
                 </tr>
                 <tr>
                     <td>Github ID</td>
-                    <td><input type="text" class="form-control git_input" id="github_id" placeholder="해당 값을 정확하게 채워야 오토 커밋이 진행됩니다."></td>
+                    <td><input type="text" disabled class="form-control git_input" id="github_id" placeholder="access token을 생성하면 해당 값은 자동으로 채워집니다."></td>
                 </tr>
                 <tr>
                     <td>Github Email</td>
-                    <td><input type="text" class="form-control git_input" id="github_email" placeholder="해당 값을 정확하게 채워야 오토 커밋이 진행됩니다."></td>
+                    <td><input type="text" disabled class="form-control git_input" id="github_email" placeholder="access token을 생성하면 해당 값은 자동으로 채워집니다."></td>
                 </tr>
                 <tr>
                     <td>Github Repository</td>
-                    <td><input type="text" class="form-control git_input" id="github_repository" placeholder="해당 값을 정확하게 채워야 오토 커밋이 진행됩니다."></td>
+                    <td>
+                        <input type="text" disabled class="form-control git_input" id="github_repository" placeholder="access token을 생성하면 리스트가 생성됩니다.">
+                        <select class="form-select git_input" id="github_repos_select"></select>
+                    </td>
                 </tr>
             </table>
             <button type="button" id="github-get-access_token" class="btn btn-secondary">Access 토큰 생성</button>
@@ -71,14 +74,16 @@
                 <tr>
                     <td>설정가능 변수</td>
                     <td>
-                        <span class="placeholder_viewer">problem_id, problem_title, memory, time</span>
+                        <span class="placeholder_viewer">{problem_id}, {problem_title}, {memory}, {time} </span>
                     </td>
                 </tr>
             </table>
             <button type="button" id="github-option-save" class="btn btn-secondary">저장하기</button>
         </div>
 
+        <script src="/js/github/auto_commit_controller.js"></script>
         <script src="/js/github/commit_message_setter.js"></script>
+        <script src="/js/github/github_message_sender.js"></script>
         <script src="/js/github/oauth.js"></script>
         <script src="/js/options/github_options.js"></script>
         <script src="/modules/jquery.js"></script>

@@ -1,13 +1,12 @@
-class Github_auto_commiter {
-    constructor(oauth_token, id, email, repository, commit_message_setter) {
+class Github_auto_committer {
+    constructor(oauth_token, id, email) {
         this.oauth_token = oauth_token;
         this.id = id;
         this.email = email
-        this.repository = repository
-        this.commit_message_setter = commit_message_setter
+        this.repository = false
+        this.commit_message_setter = get_Commit_message_setter()
     }
-
-
+    
     get_language_extension(language) {
         if (language.match("[cC][+]+") != null) {
             return "cpp"
@@ -35,28 +34,28 @@ class Github_auto_commiter {
 
     make_commit_message(submit_statues) {
         let commit_message = this.commit_message_setter.message;
-        
         for (let i = this.commit_message_setter.candidates.length - 1; i >= 0; i--) {
             const index = this.commit_message_setter.candidates[i].index;
             const value = this.commit_message_setter.candidates[i].value;
-            let concat_value = "";
-            
-            if (value == "problem_id") {
+            let concat_value = '{' + value + '}';
+
+            if (value === "problem_id") {
                 concat_value = submit_statues["problem_num"]
             }
-            else if (value == "problem_title") {
+            else if (value === "problem_title") {
                 concat_value = submit_statues["problem_title"]
             }
-            else if (value == "memory") {
+            else if (value === "memory") {
                 concat_value = submit_statues["memory"]
             }
-            else if (value == "time") {
+            else if (value === "time") {
                 concat_value = submit_statues["time"]
             }
 
             // '{'와 '}' 제거
             commit_message = commit_message.slice(0, index - 1) + concat_value + commit_message.slice(index + value.length + 1, commit_message.length)
         }
+
         return commit_message
     }
 
@@ -84,42 +83,55 @@ class Github_auto_commiter {
 }
 
 
-async function get_Github_auto_commiter() {
-    let p = new Promise(function(resolve, reject) {
-        chrome.storage.sync.get({
-            "github_access_token": false,
-            "github_id": false,
-            "github_email": false,
-            "github_repository": false,
-            "github_commit_message_setter": get_Commit_message_setter()
-        }, function(items) {
-            let lack_keys = []
-            for (const [key, value] of Object.entries(items)) {
-                if (key != "github_commit_message_setter" && value == false) {
-                    lack_keys.push(key)
-                }
-            }
+async function get_validation_Github_auto_committer() {
+    function open_option_with_alert(msg) {
+        alert(msg)
+        chrome.runtime.sendMessage({ message: "open_github_option" }, function (response) {});
+    }
 
-            if (lack_keys.length != 0) {
-                let msg = "옵션에서 해당 필드를 채워주세요. \n\n부족한 필드: \n";
-                for (let i = 0; i < lack_keys.length; i++) {
-                    msg += lack_keys[i] + "  ";
-                }
-                alert(msg);
-                chrome.runtime.sendMessage({ message: "popup" }, function (response) {});
-                resolve(null);
+    let p = new Promise(function(resolve) {
+        chrome.storage.sync.get({
+            "github_auto_committer": "false"
+        }, function(items) {
+            if (items.github_auto_committer === "false") {
+                open_option_with_alert("옵션에서 access token을 발급 받아주세요")
+                resolve(null)
             }
-            
-            const github_auto_commiter = new Github_auto_commiter(
-                                            items.github_access_token, 
-                                            items.github_id, 
-                                            items.github_email, 
-                                            items.github_repository, 
-                                            items.github_commit_message_setter
-                                        );
-            resolve(github_auto_commiter);
+            else if (items.github_auto_committer.repository === false) {
+                open_option_with_alert("옵션에서 repository를 선택해주세요")
+                resolve(null)
+            }
+            else {
+                const github_auto_committer = new Github_auto_committer(
+                    items.github_auto_committer.oauth_token,
+                    items.github_auto_committer.id,
+                    items.github_auto_committer.email
+                )
+                github_auto_committer.repository = items.github_auto_committer.repository
+                github_auto_committer.commit_message_setter = items.github_auto_committer.commit_message_setter
+                resolve(github_auto_committer)
+            }
         })
     });
     
+    return await p;
+}
+
+
+async function get_Github_auto_committer(github_access_token, github_id, github_email) {
+    let p = new Promise(function(resolve) {
+        chrome.storage.sync.get({
+            "github_auto_committer": "false"
+        }, function(items) {
+            console.log(items)
+            if (items.github_auto_committer === "false") {
+                resolve(new Github_auto_committer(github_access_token, github_id, github_email))
+            }
+            else {
+                resolve(items.github_auto_committer)
+            }
+        })
+    });
+
     return await p;
 }

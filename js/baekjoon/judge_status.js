@@ -49,11 +49,11 @@ async function check_judge_status() {
     console.log("정답처리가 되었습니다 오토 커밋을 진행합니다!")
     console.log(submit_statues)
     const source_code = await get_submitcode_by_id(submit_statues["submit_num"]);
-    const github_auto_commiter = await get_Github_auto_commiter()
-    if (github_auto_commiter == null) {
+    const github_auto_committer = await get_validation_Github_auto_committer()
+    if (github_auto_committer == null) {
         return false;
     }
-    await github_auto_commiter.create_commit(submit_statues, source_code);
+    await github_auto_committer.create_commit(submit_statues, source_code);
 }
 
 check_judge_status();

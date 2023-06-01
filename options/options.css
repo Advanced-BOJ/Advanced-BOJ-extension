@@ -37,7 +37,6 @@ td:nth-child(1) {
 
 td input {
     border: 0 !important;
-    font-size: 20px !important;
 }
 
 .result-ac {
@@ -72,9 +71,14 @@ td input {
     color: #e67e22;
 }
 
-.git_input, #github_commit_message_preview {
+.git_input {
     padding: .175rem .75rem;
     font-weight: bold;
+    font-size: 1.2rem !important;
+}
+
+.git_option {
+    font-size: 1.2rem;
 }
 
 /* #github_commit_message_preview {
