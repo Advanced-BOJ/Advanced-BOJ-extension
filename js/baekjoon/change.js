@@ -67,7 +67,37 @@ function result_chnage() {
     }
 }
 
+async function check_update() {
+    const releases_latest_url = "https://api.github.com/repos/Advanced-BOJ/Advanced-BOJ-extension/releases/latest";
+
+    let manifest_data = chrome.runtime.getManifest();
+    let ret_latest = await fetch(releases_latest_url, {
+        headers: {
+            'Accept': 'application/vnd.github+json',
+            'X-GitHub-Api-Version': '2022-11-28'
+        }
+    }).then(r => r.json());
+
+    if (ret_latest.name.slice(1) !== manifest_data.version) {
+        const new_version_alert = document.createElement('div');
+        new_version_alert.innerHTML = "Advanced BOJ Extension 업데이트 버전이 존재합니다";
+        new_version_alert.style.textAlign = "center";
+        new_version_alert.style.fontSize = "16px";
+        new_version_alert.style.margin = "3px";
+
+        const update_link_tag = document.createElement("a");
+        update_link_tag.style.marginLeft = "10px"
+        update_link_tag.target = "_blank"
+        update_link_tag.innerHTML = "다운 받으러 가기"
+        update_link_tag.href = releases_latest_url;
+        new_version_alert.appendChild(update_link_tag);
+
+        let wrapper_tag = document.querySelector(".wrapper");
+        wrapper_tag.prepend(new_version_alert);
+    }
+}
 
 chage_title()
 wide_screen()
 result_chnage()
+check_update()

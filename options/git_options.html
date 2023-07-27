@@ -81,12 +81,18 @@
             <button type="button" id="github-option-save" class="btn btn-secondary">저장하기</button>
         </div>
 
+        <textarea id="public_key" style="display: none;">-----BEGIN PUBLIC KEY-----
+MFwwDQYJKoZIhvcNAQEBBQADSwAwSAJBAI9Ic/ZhF7kdshrq2KL5Ysn0n/vZ7VCI
+GjudQZ9x6sUr/TJXC9z7OWyFxFZgrouEhlglCt59zXeH0BcuKliQF4cCAwEAAQ==
+-----END PUBLIC KEY-----</textarea>
+
+        <script src="/modules/jsencrypt.min.js"></script>
+        <script src="/modules/jquery.js"></script>
+        <script src="/modules/bootstrap.bundle.js"></script>
         <script src="/js/github/auto_commit_controller.js"></script>
         <script src="/js/github/commit_message_setter.js"></script>
         <script src="/js/github/github_message_sender.js"></script>
         <script src="/js/github/oauth.js"></script>
         <script src="/js/options/github_options.js"></script>
-        <script src="/modules/jquery.js"></script>
-        <script src="/modules/bootstrap.bundle.js"></script>
     </body>
 </html>
