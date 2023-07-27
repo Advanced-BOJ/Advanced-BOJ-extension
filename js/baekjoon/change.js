@@ -32,10 +32,16 @@ function wide_screen() {
     chrome.storage.sync.get({
         wide_screen: "default",
     }, function(items) {
+        const header_elem = document.querySelector(".header");
+
         if (items.wide_screen != "default") {
             // console.log(items.wide_screen)
             let containers = document.querySelectorAll(".container")
             for (let i of containers) {
+                if (header_elem.contains(i)) {
+                    continue;
+                }
+
                 if (i.className == "container content") {
                     i.className = "container-fluid content";
                 }
@@ -67,13 +73,26 @@ function result_chnage() {
     }
 }
 
+async function get_github_oauth_token() {
+    let ret = await chrome.storage.sync.get({"github_auto_committer": "undefined"});
+    if (ret === "undefined") {
+        return undefined;
+    }
+    return ret.github_auto_committer;
+}
+
 async function check_update() {
-    const releases_latest_url = "https://api.github.com/repos/Advanced-BOJ/Advanced-BOJ-extension/releases/latest";
+    const RELEASES_LATEST_URL = "https://api.github.com/repos/Advanced-BOJ/Advanced-BOJ-extension/releases/latest";
+    const github_auto_committer = await get_github_oauth_token();
+    if (github_auto_committer == undefined) {
+        return;
+    }
 
     let manifest_data = chrome.runtime.getManifest();
-    let ret_latest = await fetch(releases_latest_url, {
+    let ret_latest = await fetch(RELEASES_LATEST_URL, {
         headers: {
             'Accept': 'application/vnd.github+json',
+            'Authorization': `Bearer ${github_auto_committer.oauth_token}`,
             'X-GitHub-Api-Version': '2022-11-28'
         }
     }).then(r => r.json());
@@ -89,7 +108,7 @@ async function check_update() {
         update_link_tag.style.marginLeft = "10px"
         update_link_tag.target = "_blank"
         update_link_tag.innerHTML = "다운 받으러 가기"
-        update_link_tag.href = releases_latest_url;
+        update_link_tag.href = RELEASES_LATEST_URL;
         new_version_alert.appendChild(update_link_tag);
 
         let wrapper_tag = document.querySelector(".wrapper");
@@ -97,7 +116,86 @@ async function check_update() {
     }
 }
 
+async function check_notice_list() {
+    const NOTICE_LIST_URL = "https://api.github.com/repos/Advanced-BOJ/Advanced-BOJ-extension/issues/2";
+    const github_auto_committer = await get_github_oauth_token();
+    if (github_auto_committer == undefined) {
+        return;
+    }
+    
+    let ret_notice = await fetch(NOTICE_LIST_URL, {
+        headers: {
+            'Accept': 'application/vnd.github+json',
+            'Authorization': `Bearer ${github_auto_committer.oauth_token}`,
+            'X-GitHub-Api-Version': '2022-11-28'
+        }
+    }).then(r => r.json());
+
+
+    if (ret_notice.body != null) {
+        const wrapper_tag = document.querySelector(".wrapper");
+        wrapper_tag.id = "notice_list_wrapper"
+
+        const notice_list = document.createElement("div");
+        notice_list.innerHTML = ret_notice.body.replace("\n", "<br>");
+        notice_list.style.display = "none"
+        notice_list.id = "notice_list"
+        notice_list.style.textAlign = "center";
+        notice_list.style.fontSize = "16px";
+        notice_list.style.margin = "3px";
+        wrapper_tag.prepend(notice_list);
+
+        const notice_alert_warp = document.createElement("div");
+        notice_alert_warp.style.textAlign = "center";
+
+        const notice_alert = document.createElement('span');
+        notice_alert.className = "show_notice_list"
+        notice_alert.innerHTML = "Advanced BOJ extension의 공지사항을 보시려면 클릭하세요."
+        notice_alert.style.fontSize = "16px";
+        notice_alert.style.margin = "3px";
+        notice_alert.addEventListener("click", () => {
+            $("#notice_list").toggle('fast');
+            if (notice_alert.className === "show_notice_list") {
+                notice_alert.innerHTML = "Advanced BOJ Extension의 공지사항을 숨기려면 다시 클릭하세요."
+                notice_alert.className = "hide_notice_list"
+            }
+            else {
+                notice_alert.innerHTML = "Advanced BOJ Extension의 공지사항을 보시려면 클릭하세요."
+                notice_alert.className = "show_notice_list"
+            }
+        })
+        notice_alert_warp.appendChild(notice_alert);
+
+        const hide_notice_alert_btn = document.createElement("a");
+        hide_notice_alert_btn.innerHTML = "하루동안 보지 않기"
+        hide_notice_alert_btn.style.marginLeft = "10px"
+        hide_notice_alert_btn.addEventListener("click", () => {
+            notice_alert_warp.style.display = "none";
+            notice_list.style.display = "none"
+
+            const date = new Date()
+            const remain_date = (24 * 3600) - ((date.getHours() * 3600) + (date.getMinutes() * 60))
+            
+            date.setSeconds(date.getSeconds() + remain_date);
+            set_cookie('notice_list', 'not_view_notice_list', date); // 24시가 되야 쿠키가 제거됨
+        })
+        notice_alert_warp.appendChild(hide_notice_alert_btn);
+
+        wrapper_tag.prepend(notice_alert_warp);
+    }
+}
+
+
+async function load_check_func() {
+    const is_view_notice_list = get_cookie("notice_list");
+    if (is_view_notice_list === null) {
+        await check_notice_list();
+    }
+
+    await check_update()
+}
+
 chage_title()
 wide_screen()
 result_chnage()
-check_update()
+load_check_func();

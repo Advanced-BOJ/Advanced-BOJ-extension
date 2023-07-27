@@ -19,7 +19,16 @@ function DOMRegex(selector, regex, check_attirbute = "") {
     return output;
 }
 
-function get_cookie(cookie_name) {
+function set_cookie(name, value, day) {
+    document.cookie = name + '=' + value + ';expires=' + day + ';path=/';
+}
+
+function get_cookie(name) {
+    const value = document.cookie.match('(^|;) ?' + name + '=([^;]*)(;|$)');
+    return value ? value[2] : null;
+};
+
+function get_cookies(cookie_name) {
     const cookies = document.cookie.split(';');
     for (let i = 0; i < cookies.length; i++) {
         let split_cookie = cookies[i].split('=');
