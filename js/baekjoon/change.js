@@ -82,14 +82,15 @@ async function get_github_oauth_token() {
 }
 
 async function check_update() {
-    const RELEASES_LATEST_URL = "https://api.github.com/repos/Advanced-BOJ/Advanced-BOJ-extension/releases/latest";
+    const RELEASES_LATEST_API_URL = "https://api.github.com/repos/Advanced-BOJ/Advanced-BOJ-extension/releases/latest";
+    const RELEASES_LATEST_URL = "https://github.com/Advanced-BOJ/Advanced-BOJ-extension/releases/latest";
     const github_auto_committer = await get_github_oauth_token();
     if (github_auto_committer == undefined) {
         return;
     }
 
     let manifest_data = chrome.runtime.getManifest();
-    let ret_latest = await fetch(RELEASES_LATEST_URL, {
+    let ret_latest = await fetch(RELEASES_LATEST_API_URL, {
         headers: {
             'Accept': 'application/vnd.github+json',
             'Authorization': `Bearer ${github_auto_committer.oauth_token}`,
@@ -97,7 +98,8 @@ async function check_update() {
         }
     }).then(r => r.json());
 
-    if (ret_latest.name.slice(1) !== manifest_data.version) {
+    const version_regexp = new RegExp("[\\d]+.[\\d]+.[\\d]+");
+    if (version_regexp.exec(ret_latest.name)[0] !== manifest_data.version) {
         const new_version_alert = document.createElement('div');
         new_version_alert.innerHTML = "Advanced BOJ Extension 업데이트 버전이 존재합니다";
         new_version_alert.style.textAlign = "center";
