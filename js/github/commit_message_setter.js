@@ -23,8 +23,9 @@ class Commit_message_setter {
 
     set_commit_message(commit_message, preview_element) {
         this.message = commit_message;
+        commit_message = commit_message.split(" ").join("&nbsp;");
         this.candidates = this.#get_candidate_keys(commit_message)
-
+        
         let element_value = commit_message;
         for (let i = this.candidates.length - 1; i >= 0; i--) {
             const index = this.candidates[i].index;
@@ -34,6 +35,7 @@ class Commit_message_setter {
             }
 
         }
+
         preview_element.innerHTML = element_value
     }
 }

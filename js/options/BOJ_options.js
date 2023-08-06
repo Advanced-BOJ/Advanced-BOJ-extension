@@ -62,7 +62,7 @@ function default_options() {
 
 function restore_options() {
     chrome.storage.sync.get({
-        is_display_alert: true,
+        is_display_alert: false,
         problem_title: "number",
         wide_screen: "default"
     }, function(items) {
