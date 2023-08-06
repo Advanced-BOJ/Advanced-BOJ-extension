@@ -2,7 +2,7 @@
     "manifest_version": 3,
     "name": "Advanced BOJ",
     "description": "오토커밋 등 백준 사이트의 편의성을 제공해주는 extension",
-    "version": "1.0.3",
+    "version": "1.1.0",
     "background": {
         "service_worker": "background.js"
     },
@@ -33,12 +33,13 @@
         "https://github.com/*"
     ],
     "content_scripts": [{
-        "matches": ["https://www.acmicpc.net/status?*"],
+        "matches": ["https://www.acmicpc.net/status?from_mine=1*"],
         "js": [
             "./modules/jquery.js",
             "./modules/jsencrypt.min.js",
             "./modules/base64.js",
             "./modules/utils.js",
+            "./js/baekjoon/utils.js",
             "./js/baekjoon/getdatas.js",
             "./js/baekjoon/judge_status.js",
             "./js/github/commit_message_setter.js",
@@ -51,6 +52,10 @@
             "js": [
                 "./modules/jquery.js",
                 "./modules/utils.js",
+                "./js/baekjoon/utils.js",
+                "./js/github/commit_message_setter.js",
+                "./js/github/auto_commit_controller.js",
+                "./js/baekjoon/getdatas.js",
                 "./js/baekjoon/change.js"
             ],
             "run_at": "document_idle"

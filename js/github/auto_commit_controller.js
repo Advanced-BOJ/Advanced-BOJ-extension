@@ -61,30 +61,89 @@ class Github_auto_committer {
         return commit_message
     }
 
+    
+    async get_sha(submit_statues) {
+        const language_extension = this.get_language_extension(submit_statues["language"])
+        const path = `baekjoon/${submit_statues["problem_num"]} ${submit_statues["problem_title"]}.${language_extension}`
+        const headers = {
+            'Accept': 'application/vnd.github+json',
+            'Authorization': `Bearer ${this.oauth_token}`,
+            'Content-Type': 'application/x-www-form-urlencoded'
+        }
+
+        return await fetch(`https://api.github.com/repos/${this.id}/${this.repository}/contents/${path}`, {
+            method: 'GET',
+            headers: headers,
+        }).then((r) => {
+            if (r.ok) {
+                return r.json();
+            }
+            return Promise.reject(r.json());
+        }).catch((e) => {
+            return e;
+        });
+    }
+
+
+    async #duplication_commit(url, headers, commit_message, submit_statues, btoa_source_code) {
+        const already_commit_info = await this.get_sha(submit_statues);
+        already_commit_info.content = already_commit_info.content.replaceAll("\n", "");
+        if (btoa_source_code === already_commit_info.content) {
+            // 이미 커밋된 것과 내용이 같음
+            return;
+        }
+
+        fetch(url, {
+            method: 'PUT',
+            headers: headers,
+            body: `{"message":"${commit_message}","committer":{"name":"${this.id}","email":"${this.email}"},"content":"${btoa_source_code}","sha":"${already_commit_info.sha}"}`
+        }).then(async (r) => {
+            if (r.status !== 200 && r.stuats !== 201 && r.stauts !== 409 && r.status !== 422) {
+                return;
+            }
+            post_event("duplication_commit", this, submit_statues["problem_num"]);
+        });
+    }
 
     async create_commit(submit_statues, source_code) {
         const language_extension = this.get_language_extension(submit_statues["language"])
         const path = `baekjoon/${submit_statues["problem_num"]} ${submit_statues["problem_title"]}.${language_extension}`
         const commit_message = this.make_commit_message(submit_statues)
         const btoa_source_code = Base64.encode(source_code)
+        const url = `https://api.github.com/repos/${this.id}/${this.repository}/contents/${path}`;
 
-        await fetch(`https://api.github.com/repos/${this.id}/${this.repository}/contents/${path}`, {
+        const headers = {
+            'Accept': 'application/vnd.github+json',
+            'Authorization': `Bearer ${this.oauth_token}`,
+            'Content-Type': 'application/x-www-form-urlencoded'
+        }
+
+        return await fetch(url, {
             method: 'PUT',
-            headers: {
-                'Accept': 'application/vnd.github+json',
-                'Authorization': `Bearer ${this.oauth_token}`,
-                'Content-Type': 'application/x-www-form-urlencoded'
-            },
+            headers: headers,
             body: `{"message":"${commit_message}","committer":{"name":"${this.id}","email":"${this.email}"},"content":"${btoa_source_code}"}`
         }).then((r) => {
+            if (r.status !== 200 && r.status !== 201 && r.stauts !== 409 && r.status !== 422) {
+                view_alert("is_display_alert", "오토 커밋을 실패하였습니다.\n버그일 경우, github에 제보 부탁드립니다.")
+                return false;
+            }
             post_event("try_problem", this, submit_statues["problem_num"]);
+            
+            // commit 완료한 문제
             if (r.status === 422) {
-                console.log("이미 커밋이 되어있습니다.")
+                this.#duplication_commit(url, headers, commit_message, submit_statues, btoa_source_code);
+                return false;
             }
-            else {
-                post_event("begin_checkout", this, submit_statues["problem_num"]);
-            }
+
+            post_event("begin_checkout", this, submit_statues["problem_num"]);
+            return true;
         });
+    }
+
+
+    ask_auto_commit() {
+        // 기본값: 물어봄
+        return view_alert("ask_auto_commit", "정답 처리된 코드가 존재합니다.\n해당 문제의 소스코드를 커밋 하시겠습니까?");
     }
 }
 
@@ -129,12 +188,18 @@ async function get_Github_auto_committer(github_access_token, github_id, github_
         chrome.storage.sync.get({
             "github_auto_committer": "false"
         }, function(items) {
-            console.log(items)
             if (items.github_auto_committer === "false") {
                 resolve(new Github_auto_committer(github_access_token, github_id, github_email))
             }
             else {
-                resolve(items.github_auto_committer)
+                const github_auto_committer = new Github_auto_committer(
+                    items.github_auto_committer.oauth_token,
+                    items.github_auto_committer.id,
+                    items.github_auto_committer.email
+                )
+                github_auto_committer.repository = items.github_auto_committer.repository
+                github_auto_committer.commit_message_setter = items.github_auto_committer.commit_message_setter
+                resolve(github_auto_committer)
             }
         })
     });

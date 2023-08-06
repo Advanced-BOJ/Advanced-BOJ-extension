@@ -70,7 +70,6 @@ function set_input_values() {
     });
 }
 
-// TODO: repository만 저장하도록 수정
 function github_info_save() {
     if (github_auto_committer === undefined) {
         alert("Access 토큰 생성부터 진행해주세요")

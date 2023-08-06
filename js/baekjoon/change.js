@@ -199,6 +199,38 @@ async function load_check_func() {
     await check_update()
 }
 
+
+async function check_commited_problem() {
+    const problem_menu_elem = document.querySelector(".problem-menu");
+    const user_name = document.querySelector(".username");
+    if (problem_menu_elem === null || user_name === null) {
+        return; 
+    }
+
+    const problem_num = problem_menu_elem.querySelector("li > a").href.match("\\d+")[0];
+    const cur_problem_status = await fetch(`https://www.acmicpc.net/status?user_id=${user_name.textContent}&problem_id=${problem_num}`, {
+        headers: {
+            'Accept': 'application/text',
+        }
+    }).then((r) => {
+        return r.text();
+    });
+
+    let html_parser = new DOMParser();
+    const submit_html = html_parser.parseFromString(cur_problem_status, "text/html")
+    const ac_elem = submit_html.querySelector(".result-ac");
+    if (ac_elem !== null) {
+        const submit_statues = await get_submit_statues_by_table(submit_html);
+        const github_auto_committer = await get_Github_auto_committer();        
+        const git_commit_json = await github_auto_committer.get_sha(submit_statues["data"])
+        if (git_commit_json.message !== "Not Found") {
+            append_commited_tag();
+        }
+    }
+}
+
+
+check_commited_problem();
 chage_title()
 wide_screen()
 result_chnage()

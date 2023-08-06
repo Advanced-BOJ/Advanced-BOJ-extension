@@ -5,7 +5,7 @@ function status_alert(timeout = 1500) {
 }
 
 function radio_options() {
-    const names = ["wide_screen", "problem_title", "is_display_alert"]
+    const names = ["wide_screen", "problem_title", "is_display_alert", "ask_auto_commit"]
 
     for (const name of names) {
         const radio_tags = document.querySelectorAll(`input[name='${name}']`)
@@ -62,13 +62,15 @@ function default_options() {
 
 function restore_options() {
     chrome.storage.sync.get({
+        ask_auto_commit: false,
         is_display_alert: false,
         problem_title: "number",
         wide_screen: "default"
     }, function(items) {
-        document.querySelector("input[value='" + items.is_display_alert + "']").checked = true
-        document.querySelector("input[value='" + items.problem_title + "']").checked = true
-        document.querySelector("input[value='" + items.wide_screen + "']").checked = true
+        document.querySelector("#ask_auto_commit " + "input[value='" + items.ask_auto_commit + "']").checked = true
+        document.querySelector("#is_display_alert " + "input[value='" + items.is_display_alert + "']").checked = true
+        document.querySelector("#problem_title " + "input[value='" + items.problem_title + "']").checked = true
+        document.querySelector("#wide_screen " + "input[value='" + items.wide_screen + "']").checked = true
     });
 
     var result_input_tags = document.querySelectorAll('input[class*="result-"]')

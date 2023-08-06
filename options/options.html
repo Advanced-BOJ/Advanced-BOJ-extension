@@ -36,14 +36,26 @@
 
             <div id="status">설정은 자동으로 저장됩니다. 페이지를 새로고침하시면 변경 사항이 적용됩니다.</div>
 
-            <form id="is_display_alert">
-                <b>경고 alert 출력하기:</b>
+            <form id="ask_auto_commit">
+                <b>오토 커밋 전 confirm 출력:</b>
                 <label>
-                    <input type="radio" name="is_display_alert" value="true" checked>
+                    <input type="radio" name="ask_auto_commit" value="true" checked>
                     출력하기
                 </label>
                 <label>
-                    <input type="radio" name="is_display_alert" value="false">
+                    <input type="radio" name="ask_auto_commit" value="false">
+                    출력하지 않기
+                </label>
+            </form>
+
+            <form id="is_display_alert">
+                <b>경고 alert 출력하기:</b>
+                <label>
+                    <input type="radio" name="is_display_alert" value="true">
+                    출력하기
+                </label>
+                <label>
+                    <input type="radio" name="is_display_alert" value="false" checked>
                     출력하지 않기
                 </label>
             </form>

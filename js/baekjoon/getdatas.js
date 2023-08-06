@@ -1,11 +1,9 @@
-async function get_submit_statues_by_table() {
+async function get_submit_statues_by_table(document) {
     let ret = {
         "success": true,
         "error": "",
         "data": {}
     };
-
-    // TODO: 로그인 확인
 
     let patient = 5;
     let status_tag = null;
@@ -29,6 +27,9 @@ async function get_submit_statues_by_table() {
     let submit_num = submit_num_tag.textContent;
     let problem_title_tag = status_tag.querySelector("td:nth-child(3) a");
     let problem_title = problem_title_tag.getAttribute("data-original-title");
+    if (problem_title == null) {
+        problem_title = problem_title_tag.getAttribute("title")
+    }
     let problem_num = problem_title_tag.textContent;
     let memory_tag = status_tag.querySelector(".memory");
     let memory = memory_tag.textContent;
@@ -92,7 +93,7 @@ async function post_submit_source_code(problem_id, source_code) {
 }
 
 async function main() {
-    let result = await get_submit_statues_by_table();
+    let result = await get_submit_statues_by_table(document);
     console.log(result);
     if (result == "ac") {
         let code = await get_submitcode_by_id(50654181);
