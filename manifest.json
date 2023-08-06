@@ -2,7 +2,7 @@
     "manifest_version": 3,
     "name": "Advanced BOJ",
     "description": "오토커밋 등 백준 사이트의 편의성을 제공해주는 extension",
-    "version": "1.0.2",
+    "version": "1.0.3",
     "background": {
         "service_worker": "background.js"
     },

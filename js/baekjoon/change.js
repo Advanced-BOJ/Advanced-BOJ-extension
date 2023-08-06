@@ -153,6 +153,7 @@ async function check_notice_list() {
         const notice_alert = document.createElement('span');
         notice_alert.className = "show_notice_list"
         notice_alert.innerHTML = "Advanced BOJ extension의 공지사항을 보시려면 클릭하세요."
+        notice_alert.style.cursor = "pointer";
         notice_alert.style.fontSize = "16px";
         notice_alert.style.margin = "3px";
         notice_alert.addEventListener("click", () => {
@@ -170,6 +171,7 @@ async function check_notice_list() {
 
         const hide_notice_alert_btn = document.createElement("a");
         hide_notice_alert_btn.innerHTML = "하루동안 보지 않기"
+        hide_notice_alert_btn.style.cursor = "pointer";
         hide_notice_alert_btn.style.marginLeft = "10px"
         hide_notice_alert_btn.addEventListener("click", () => {
             notice_alert_warp.style.display = "none";

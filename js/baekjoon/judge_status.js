@@ -1,8 +1,9 @@
 function view_alert(msg) {
     chrome.storage.sync.get({
-        "is_display_alert": true,
+        "is_display_alert": false,
     }, function(items) {
         if (items.is_display_alert == "true") {
+            msg += "\n\n*alert은 설정 페이지에서 끌 수 있습니다.";
             alert(msg);
         }
     })
